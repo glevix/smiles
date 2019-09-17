@@ -53,16 +53,20 @@ classWeight = classTotals.max() / classTotals
 
 # partition the data into training and testing sploits using 80% of
 # the data for training and the remaining 20% for testing
-(trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.20, stratify=labels, random_state=42)
+(trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.20, stratify=labels)
 
 # initialize the model
-print('[INFO] compiling model...')
-model = LeNet.build_bagged(5, 2000, width=28, height=28, depth=1, classes=2)
-model.compile(loss=['binary_crossentropy'], optimizer='adam', metrics=['accuracy'])
-
+#print('[INFO] compiling model...')
+#model = LeNet.build_bagged(5, 2000, width=28, height=28, depth=1, classes=2)
+#model.compile(loss=['binary_crossentropy'], optimizer='adam', metrics=['accuracy'])
 # train the network
-print('[INFO] training network...')
-H = model.fit(trainX, trainY, validation_data=(testX, testY), class_weight=classWeight, batch_size=64, epochs=15, verbose=1)
+#print('[INFO] training network...')
+#H = model.fit(trainX, trainY, validation_data=(testX, testY), class_weight=classWeight, batch_size=64, epochs=15, verbose=1)
+
+# load a previously trained model
+print('[INFO] loading model...')
+model = LeNet.load_bagged(5)
+
 
 # evaluate the network
 print('[INFO] evaluating network...')
@@ -71,7 +75,7 @@ print(classification_report(testY.argmax(axis=1), predictions.argmax(axis=1), ta
 
 # save the model to disk
 print('[INFO] serializing network')
-#model.save(args['model'])
+model.save()
 
 # plt.style.use('ggplot')
 # plt.figure()

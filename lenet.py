@@ -1,5 +1,5 @@
 # import the necessary packages
-from keras.models import Sequential
+from keras.models import Sequential, model_from_json
 from keras.layers.convolutional import Conv2D
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.core import Activation
@@ -47,7 +47,23 @@ class ModelWrapper:
         return average
 
     def save(self):
-        pass
+        jsons = [model.to_json() for model in self.models]
+        for i in range(len(jsons)):
+            with open("network_" + str(i) + ".json", "w") as json_file:
+                json_file.write(jsons[i])
+            self.models[i].save_weights("weights_" + str(i) + ".h")
+
+    def load(self, num_bags):
+        for i in range(num_bags):
+            try:
+                json_file = open("network_" + str(i) + ".json", 'r')
+            except IOError:
+                return False
+            json = json_file.read()
+            json_file.close()
+            model = model_from_json(json)
+            model.load_weights("weights_" + str(i) + ".h")
+            self.models.append(model)
 
 
 
@@ -91,3 +107,9 @@ class LeNet:
         for i in range(num_bags):
             models.append(LeNet.build(**params))
         return ModelWrapper(models, bag_size)
+
+    @staticmethod
+    def load_bagged(num_bags):
+        model = ModelWrapper([], 0)
+        model.load(num_bags)
+        return model
