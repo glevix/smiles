@@ -57,7 +57,7 @@ classWeight = classTotals.max() / classTotals
 
 # initialize the model
 print('[INFO] compiling model...')
-model = LeNet.build(width=28, height=28, depth=1, classes=2)
+model = LeNet.build_bagged(2, 2000, width=28, height=28, depth=1, classes=2)
 model.compile(loss=['binary_crossentropy'], optimizer='adam', metrics=['accuracy'])
 
 # train the network
