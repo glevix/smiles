@@ -27,20 +27,24 @@ class ModelWrapper:
 
     def compile(self, **params):
         for model in self.models:
-            model.compile(params)
+            model.compile(**params)
 
     def fit(self, train_x, train_y, **params):
         num_bags = len(self.models)
         bags_x, bags_y = ModelWrapper.bag(train_x, train_y, num_bags, self.bag_size)
         for i in range(num_bags):
-            self.models[i].fit(bags_x[i], bags_y[i], params)
+            print("Fitting model " + str(i + 1) + " of " + str(num_bags))
+            self.models[i].fit(bags_x[i], bags_y[i], **params)
 
     def predict(self, test_x, **params):
         num_bags = len(self.models)
-        predictions = np.zeros(num_bags)
+        predictions = np.zeros((num_bags, test_x.shape[0], 2))
+        average = np.zeros((test_x.shape[0], 2))
         for i in range(num_bags):
-            predictions[i](self.models[i].predict(test_x, params))
-        return np.sum(predictions, axis=1) / num_bags
+            predictions[i, :, :] = self.models[i].predict(test_x, **params)
+        average[:, 0] = np.sum(predictions[:, :, 0], axis=0) / num_bags
+        average[:, 1] = 1 - average[:, 0]
+        return average
 
     def save(self):
         pass
@@ -82,8 +86,8 @@ class LeNet:
         return model
 
     @staticmethod
-    def build_bagged(num_bags, bag_size, *params):
+    def build_bagged(num_bags, bag_size, **params):
         models = []
         for i in range(num_bags):
-            models.append(LeNet.build(params))
+            models.append(LeNet.build(**params))
         return ModelWrapper(models, bag_size)

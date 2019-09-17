@@ -57,7 +57,7 @@ classWeight = classTotals.max() / classTotals
 
 # initialize the model
 print('[INFO] compiling model...')
-model = LeNet.build_bagged(2, 2000, width=28, height=28, depth=1, classes=2)
+model = LeNet.build_bagged(5, 2000, width=28, height=28, depth=1, classes=2)
 model.compile(loss=['binary_crossentropy'], optimizer='adam', metrics=['accuracy'])
 
 # train the network
@@ -71,16 +71,16 @@ print(classification_report(testY.argmax(axis=1), predictions.argmax(axis=1), ta
 
 # save the model to disk
 print('[INFO] serializing network')
-model.save(args['model'])
+#model.save(args['model'])
 
-plt.style.use('ggplot')
-plt.figure()
-plt.plot(np.arange(0, 15), H.history['loss'], label='train_loss')
-plt.plot(np.arange(0, 15), H.history['val_loss'], label='val_loss')
-plt.plot(np.arange(0, 15), H.history['acc'], label='acc')
-plt.plot(np.arange(0, 15), H.history['val_acc'], label='val_acc')
-plt.title('Training Loss and Accuracy')
-plt.xlabel('Epoch #')
-plt.ylabel('Loss/Accuracy')
-plt.legend()
-plt.show()
+# plt.style.use('ggplot')
+# plt.figure()
+# plt.plot(np.arange(0, 15), H.history['loss'], label='train_loss')
+# plt.plot(np.arange(0, 15), H.history['val_loss'], label='val_loss')
+# plt.plot(np.arange(0, 15), H.history['acc'], label='acc')
+# plt.plot(np.arange(0, 15), H.history['val_acc'], label='val_acc')
+# plt.title('Training Loss and Accuracy')
+# plt.xlabel('Epoch #')
+# plt.ylabel('Loss/Accuracy')
+# plt.legend()
+# plt.show()
