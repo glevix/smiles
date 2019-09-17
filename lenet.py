@@ -82,7 +82,7 @@ class LeNet:
         return model
 
     @staticmethod
-    def build_bagged(num_bags, bag_size, **params):
+    def build_bagged(num_bags, bag_size, *params):
         models = []
         for i in range(num_bags):
             models.append(LeNet.build(params))
