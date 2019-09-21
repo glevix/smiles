@@ -7,9 +7,7 @@ from keras.utils import np_utils
 from lenet import LeNet
 from imutils import paths
 import imutils
-import matplotlib.pyplot as plt
 import numpy as np
-import argparse
 import cv2
 import os
 
@@ -55,10 +53,9 @@ classWeight = classTotals.max() / classTotals
 # the data for training and the remaining 20% for testing
 (trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.20, stratify=labels)
 
-# initialize the model
-#print('[INFO] compiling model...')
-#model = LeNet.build_bagged(5, 2000, width=28, height=28, depth=1, classes=2)
-#model.compile(loss=['binary_crossentropy'], optimizer='adam', metrics=['accuracy'])
+print('[INFO] compiling model...')
+model = LeNet.build_bagged(5, 2000, width=28, height=28, depth=1, classes=2)
+model.compile(loss=['binary_crossentropy'], optimizer='adam', metrics=['accuracy'])
 # train the network
 #print('[INFO] training network...')
 #H = model.fit(trainX, trainY, validation_data=(testX, testY), class_weight=classWeight, batch_size=64, epochs=15, verbose=1)
