@@ -46,6 +46,12 @@ class ModelWrapper:
         average[:, 1] = 1 - average[:, 0]
         return average
 
+    def predict_single(self, x, threshold, **params):
+        test_x = np.zeros((1, x.shape[0], x.shape[1], 1))
+        test_x[0, :, :, 0] = x
+        prediction = self.predict(test_x, **params)[0][1]
+        return prediction > threshold
+
     def save(self):
         jsons = [model.to_json() for model in self.models]
         for i in range(len(jsons)):
