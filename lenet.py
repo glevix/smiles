@@ -74,10 +74,26 @@ class LeNet:
     def build(width, height, depth, classes):
         model = Sequential()
 
-        model.add(Conv2D(20, (5, 5), padding='same', input_shape=(height, width, depth), activation='relu'))
+        model.add(Conv2D(30, (4, 4), activation='relu', padding='same', input_shape=(height, width, depth)))
         model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
-        model.add(Conv2D(50, (5, 5), padding='same', activation='relu'))
+        model.add(Conv2D(60, (4, 4), activation='relu', padding='same'))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+        model.add(Flatten())
+        model.add(Dense(800, activation='relu'))
+
+        model.add(Dense(classes, activation='softmax'))
+        return model
+
+    @staticmethod
+    def build_old(width, height, depth, classes):
+        model = Sequential()
+
+        model.add(Conv2D(20, (5, 5), activation='relu', padding='same', input_shape=(height, width, depth)))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+        model.add(Conv2D(50, (5, 5), activation='relu', padding='same'))
         model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
         model.add(Flatten())
