@@ -87,22 +87,6 @@ class LeNet:
         return model
 
     @staticmethod
-    def build_old(width, height, depth, classes):
-        model = Sequential()
-
-        model.add(Conv2D(20, (5, 5), activation='relu', padding='same', input_shape=(height, width, depth)))
-        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-
-        model.add(Conv2D(50, (5, 5), activation='relu', padding='same'))
-        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-
-        model.add(Flatten())
-        model.add(Dense(500, activation='relu'))
-
-        model.add(Dense(classes, activation='softmax'))
-        return model
-
-    @staticmethod
     def build_bagged(num_bags, bag_size, **params):
         models = []
         for i in range(num_bags):
