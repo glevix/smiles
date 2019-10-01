@@ -36,11 +36,10 @@ weight = max(total_0, total_1) / np.array([total_0, total_1])
 model = LeNet.build_bagged(5, 2000, width=28, height=28, depth=1, classes=2)
 model.compile(loss=['binary_crossentropy'], optimizer='adam')
 
-H = model.fit(trainX, trainY, validation_data=(testX, testY), class_weight=weight, batch_size=64, epochs=1, verbose=1)
+H = model.fit(trainX, trainY, validation_data=(testX, testY), class_weight=weight, batch_size=64, epochs=20, verbose=1)
 
 predictions = model.predict(testX, batch_size=64)
-print(classification_report(testY.argmax(axis=1), predictions.argmax(axis=1), target_names=[0., 1.]))
+print(classification_report(testY.argmax(axis=1), predictions.argmax(axis=1), target_names=['0', '1']))
 
-#model.save()
-
+model.save()
 

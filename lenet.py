@@ -34,12 +34,12 @@ class ModelWrapper:
             self.models[i].fit(bags_x[i], bags_y[i], **params)
 
     def predict(self, test_x, **params):
-        num_bags = len(self.models)
-        predictions = np.zeros((num_bags, test_x.shape[0], 2))
+        num_networks = len(self.models)
+        predictions = np.zeros((num_networks, test_x.shape[0], 2))
         average = np.zeros((test_x.shape[0], 2))
-        for i in range(num_bags):
+        for i in range(num_networks):
             predictions[i, :, :] = self.models[i].predict(test_x, **params)
-        average[:, 0] = np.sum(predictions[:, :, 0], axis=0) / num_bags
+        average[:, 0] = np.sum(predictions[:, :, 0], axis=0) / num_networks
         average[:, 1] = 1 - average[:, 0]
         return average
 

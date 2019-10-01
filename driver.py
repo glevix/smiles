@@ -1,13 +1,28 @@
+################################### DESCRIPTION ######################################
+"""
+Smile detection snapshot utility
+
+Program attaches to available camera, and takes a snapshot only when all subjects
+are smiling.
+
+Terminates after <MAX_SNAPSHOTS> photos are taken
+Saves photos in current directory as <SAVE_NAME>_#.jpg
+After each snapshot, waits <DELAY_SECONDS> before continuing, to prevent identical
+snapshots
+"""
 ##################################### IMPORTS ########################################
 import cv2
 import time
 from lenet import LeNet
-#################################### CONSTANTS #######################################
-cascade_path = 'haarcascade_frontalface_default.xml'
+
+################################# USER VARIABLES #####################################
 MAX_SNAPSHOTS = 3
 DELAY_SECONDS = 1
-BUILT_IN_CAMERA = 0
 SAVE_NAME = 'snapshot'
+
+#################################### CONSTANTS #######################################
+cascade_path = 'haarcascade_frontalface_default.xml'
+BUILT_IN_CAMERA = 0
 MIN_CONFIDENCE = 0.6
 NETWORK_INPUT_SHAPE = (28, 28)
 GREEN = (0, 255, 0)
