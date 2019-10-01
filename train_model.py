@@ -1,87 +1,46 @@
-# import the necessary packages
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from keras.preprocessing.image import img_to_array
-from keras.utils import np_utils
 from lenet import LeNet
-from imutils import paths
-import imutils
 import numpy as np
 import cv2
 import os
+from keras.preprocessing.image import img_to_array
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from imutils import paths
+import imutils
 
-# # construct the argument parser and parse tha arguments
-# ap = argparse.ArgumentParser()
-# ap.add_argument('-d', '--dataset', required=True, help='path to the input dataset of faces')
-# ap.add_argument('-m', '--model', required=True, help='path to output model')
-# args = vars(ap.parse_args())
+data, labels = [], []
 
-args = {'dataset': 'datasets', 'model': 'model'}
+total_0 = 0
+total_1 = 0
 
-# initialize the list of data and labels
-data = []
-labels = []
-
-# loop over the input images
-for imagePath in sorted(list(paths.list_images(args['dataset']))):
-    # load the image, pre-process it, and store in the data list
-    image = cv2.imread(imagePath)
+for path in sorted(list(paths.list_images('datasets'))):
+    image = cv2.imread(path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = imutils.resize(image, width=28)
-    image = img_to_array(image)
-    data.append(image)
+    data.append(img_to_array(image))
+    category = float(path.split(os.path.sep)[-2])
+    if category > 0:
+        labels.append([0., 1.])
+        total_1 += 1
+    else:
+        labels.append([1., 0.])
+        total_0 += 1
 
-    # extravt the class label from the image path and update the labels list
-    label = imagePath.split(os.path.sep)[-2]
-    # label = 'smiling' if label == 1 else 'not_smiling'
-    labels.append(label)
+data, labels = np.array(data, dtype='float'), np.array(labels)
+data = data / 255.0
 
-# scale the raw pixel intensities to the range [0, 1]
-data = np.array(data, dtype='float') / 255.0
-labels = np.array(labels)
+weight = max(total_0, total_1) / np.array([total_0, total_1])
 
-# convert the labels from integers to vectors
-le = LabelEncoder().fit(labels)
-labels = np_utils.to_categorical(le.transform(labels), 2)
-
-# account for skew in the labeled data
-classTotals = labels.sum(axis=0)
-classWeight = classTotals.max() / classTotals
-
-# partition the data into training and testing sploits using 80% of
-# the data for training and the remaining 20% for testing
 (trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.20, stratify=labels)
 
-print('[INFO] compiling model...')
 model = LeNet.build_bagged(5, 2000, width=28, height=28, depth=1, classes=2)
-model.compile(loss=['binary_crossentropy'], optimizer='adam', metrics=['accuracy'])
-# train the network
-#print('[INFO] training network...')
-#H = model.fit(trainX, trainY, validation_data=(testX, testY), class_weight=classWeight, batch_size=64, epochs=15, verbose=1)
+model.compile(loss=['binary_crossentropy'], optimizer='adam')
 
-# load a previously trained model
-print('[INFO] loading model...')
-model = LeNet.load_bagged(5)
+H = model.fit(trainX, trainY, validation_data=(testX, testY), class_weight=weight, batch_size=64, epochs=1, verbose=1)
 
-
-# evaluate the network
-print('[INFO] evaluating network...')
 predictions = model.predict(testX, batch_size=64)
-print(classification_report(testY.argmax(axis=1), predictions.argmax(axis=1), target_names=le.classes_))
+print(classification_report(testY.argmax(axis=1), predictions.argmax(axis=1), target_names=[0., 1.]))
 
-# save the model to disk
-print('[INFO] serializing network')
-model.save()
+#model.save()
 
-# plt.style.use('ggplot')
-# plt.figure()
-# plt.plot(np.arange(0, 15), H.history['loss'], label='train_loss')
-# plt.plot(np.arange(0, 15), H.history['val_loss'], label='val_loss')
-# plt.plot(np.arange(0, 15), H.history['acc'], label='acc')
-# plt.plot(np.arange(0, 15), H.history['val_acc'], label='val_acc')
-# plt.title('Training Loss and Accuracy')
-# plt.xlabel('Epoch #')
-# plt.ylabel('Loss/Accuracy')
-# plt.legend()
-# plt.show()
+
